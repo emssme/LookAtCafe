@@ -102,13 +102,14 @@
             position: absolute;
             width: 80px;
             height: 25px;
-            background-color: rgba(255, 255, 255, 0.4);
+            background-color: rgb(var(--color-ink));
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             transform: rotate(-3deg);
             top: -10px;
             left: 50%;
             margin-left: -40px;
             z-index: 10;
+            transition: background-color 300ms ease;
         }
 
         /* Subway Line Animations */
@@ -246,8 +247,13 @@
 
             <!-- Station 1: Gunja -->
             <div class="relative flex flex-col md:flex-row items-center justify-between w-full reveal pl-12 md:pl-0">
-                <div class="station-node mt-4 md:mt-0"></div>
+                <div class="station-node mt-1 md:mt-0"></div>
                 
+                <!-- Mobile Station Title (Normal Flow to prevent overlap) -->
+                <div class="md:hidden w-full pb-6 pt-1">
+                     <div class="font-kitsch text-2xl text-mustard">Station 01 : 군자역</div>
+                </div>
+
                 <!-- Left side (Empty on mobile, spacing on desktop) -->
                 <div class="hidden md:block md:w-5/12 text-right pr-12">
                     <div class="font-kitsch text-4xl text-mustard mb-2">Station 01</div>
@@ -257,7 +263,7 @@
                 </div>
 
                 <!-- Right side (Card) -->
-                <div class="w-full md:w-5/12 md:pl-12 relative mt-4 md:mt-0">
+                <div class="w-full md:w-5/12 md:pl-12 relative">
                     <div class="bg-card-1 p-6 md:p-8 kitsch-border relative">
                         <div class="tape"></div>
                         <div class="stamp absolute -top-4 -right-4 bg-vintage-bg">취향저격</div>
@@ -276,8 +282,13 @@
 
             <!-- Station 2: Konkuk -->
             <div class="relative flex flex-col md:flex-row-reverse items-center justify-between w-full reveal pl-12 md:pl-0">
-                <div class="station-node mt-4 md:mt-0" style="border-color: rgb(var(--color-mustard));"></div>
+                <div class="station-node mt-1 md:mt-0" style="border-color: rgb(var(--color-mustard));"></div>
                 
+                <!-- Mobile Station Title (Normal Flow) -->
+                <div class="md:hidden w-full pb-6 pt-1">
+                     <div class="font-kitsch text-2xl text-coral">Station 02 : 건대입구</div>
+                </div>
+
                 <!-- Right side (Empty on mobile, spacing on desktop) -->
                 <div class="hidden md:block md:w-5/12 text-left pl-12">
                     <div class="font-kitsch text-4xl text-coral mb-2">Station 02</div>
@@ -287,9 +298,9 @@
                 </div>
 
                 <!-- Left side (Card) -->
-                <div class="w-full md:w-5/12 md:pr-12 relative mt-4 md:mt-0">
+                <div class="w-full md:w-5/12 md:pr-12 relative">
                     <div class="bg-card-2 p-6 md:p-8 kitsch-border relative" style="border-color: rgb(var(--color-mustard)); box-shadow: 6px 6px 0px rgb(var(--color-mustard));">
-                        <div class="tape"></div>
+                        <div class="tape" style="background-color: rgb(var(--color-mustard));"></div>
                         <h3 class="text-3xl font-black mb-2 tracking-tight">카페704호</h3>
                         <p class="text-sm font-typewriter text-gray-500 mb-6 border-b-2 border-dashed border-gray-300 pb-4">Konkuk Univ. Station</p>
                         <p class="text-lg leading-relaxed">
@@ -301,16 +312,17 @@
                         </div>
                     </div>
                 </div>
-                <!-- Mobile only station label -->
-                <div class="md:hidden absolute top-0 left-20">
-                     <div class="font-kitsch text-2xl text-coral">Station 02 : 건대입구</div>
-                </div>
             </div>
 
             <!-- Station 3: Sangsu -->
             <div class="relative flex flex-col md:flex-row items-center justify-between w-full reveal pl-12 md:pl-0">
-                <div class="station-node mt-4 md:mt-0" style="border-color: rgb(var(--color-ink));"></div>
+                <div class="station-node mt-1 md:mt-0" style="border-color: rgb(var(--color-ink));"></div>
                 
+                <!-- Mobile Station Title (Normal Flow) -->
+                <div class="md:hidden w-full pb-6 pt-1">
+                    <div class="font-kitsch text-2xl text-mustard">Station 03 : 상수</div>
+               </div>
+
                 <!-- Left side -->
                 <div class="hidden md:block md:w-5/12 text-right pr-12">
                     <div class="font-kitsch text-4xl text-mustard mb-2">Station 03</div>
@@ -320,7 +332,7 @@
                 </div>
 
                 <!-- Right side (Card) -->
-                <div class="w-full md:w-5/12 md:pl-12 relative mt-4 md:mt-0">
+                <div class="w-full md:w-5/12 md:pl-12 relative">
                     <div class="bg-card-1 p-6 md:p-8 kitsch-border relative">
                         <div class="tape"></div>
                         <h3 class="text-3xl font-black mb-2 tracking-tight">TYPE 한강점</h3>
@@ -334,16 +346,17 @@
                         </div>
                     </div>
                 </div>
-                <!-- Mobile only station label -->
-                <div class="md:hidden absolute top-0 left-20">
-                    <div class="font-kitsch text-2xl text-mustard">Station 03 : 상수</div>
-               </div>
             </div>
 
             <!-- Station 4: Hongdae -->
             <div class="relative flex flex-col md:flex-row-reverse items-center justify-between w-full reveal pl-12 md:pl-0">
-                <div class="station-node mt-4 md:mt-0" style="border-color: rgb(var(--color-coral));"></div>
+                <div class="station-node mt-1 md:mt-0" style="border-color: rgb(var(--color-coral));"></div>
                 
+                <!-- Mobile Station Title (Normal Flow) -->
+                <div class="md:hidden w-full pb-6 pt-1">
+                    <div class="font-kitsch text-2xl text-coral">Station 04 : 홍대입구</div>
+               </div>
+
                 <!-- Right side -->
                 <div class="hidden md:block md:w-5/12 text-left pl-12">
                     <div class="font-kitsch text-4xl text-coral mb-2">Station 04</div>
@@ -353,7 +366,7 @@
                 </div>
 
                 <!-- Left side (Card) -->
-                <div class="w-full md:w-5/12 md:pr-12 relative mt-4 md:mt-0">
+                <div class="w-full md:w-5/12 md:pr-12 relative">
                     <div class="bg-coral-light p-6 md:p-8 kitsch-border relative">
                         <div class="tape"></div>
                         <div class="stamp absolute -top-4 -left-4 bg-vintage-bg" style="border-color: rgb(var(--color-ink)); color: rgb(var(--color-ink));">HOT</div>
@@ -368,10 +381,6 @@
                         </div>
                     </div>
                 </div>
-                 <!-- Mobile only station label -->
-                 <div class="md:hidden absolute top-0 left-20">
-                    <div class="font-kitsch text-2xl text-coral">Station 04 : 홍대입구</div>
-               </div>
             </div>
             
             <!-- End of line dot -->
