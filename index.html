@@ -11,15 +11,18 @@
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        'vintage-bg': '#f4f1ea',
-                        'coral': '#db7c6e',
-                        'coral-light': '#f5a499',
-                        'mustard': '#dcb15b',
-                        'mustard-light': '#f2d488',
-                        'ink': '#3e362e'
+                        'vintage-bg': 'rgb(var(--color-vintage-bg) / <alpha-value>)',
+                        'coral': 'rgb(var(--color-coral) / <alpha-value>)',
+                        'coral-light': 'rgb(var(--color-coral-light) / <alpha-value>)',
+                        'mustard': 'rgb(var(--color-mustard) / <alpha-value>)',
+                        'mustard-light': 'rgb(var(--color-mustard-light) / <alpha-value>)',
+                        'ink': 'rgb(var(--color-ink) / <alpha-value>)',
+                        'card-1': 'rgb(var(--color-card-1) / <alpha-value>)',
+                        'card-2': 'rgb(var(--color-card-2) / <alpha-value>)'
                     },
                     fontFamily: {
                         sans: ['Pretendard', 'sans-serif'],
@@ -31,6 +34,28 @@
         }
     </script>
     <style>
+        :root {
+            --color-vintage-bg: 244 241 234;
+            --color-ink: 62 54 46;
+            --color-coral: 219 124 110;
+            --color-coral-light: 245 164 153;
+            --color-mustard: 220 177 91;
+            --color-mustard-light: 242 212 136;
+            --color-card-1: 255 255 255;
+            --color-card-2: 250 249 245;
+        }
+        
+        html.dark {
+            --color-vintage-bg: 34 32 31;
+            --color-ink: 244 241 234;
+            --color-coral: 219 124 110;
+            --color-coral-light: 153 79 67;
+            --color-mustard: 220 177 91;
+            --color-mustard-light: 140 110 45;
+            --color-card-1: 47 44 42;
+            --color-card-2: 56 52 49;
+        }
+
         @font-face {
             font-family: 'NeoDunggeunmo';
             src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.3/NeoDunggeunmo.woff') format('woff');
@@ -39,28 +64,38 @@
         }
 
         body {
-            background-color: #f4f1ea;
-            color: #3e362e;
+            background-color: rgb(var(--color-vintage-bg));
+            color: rgb(var(--color-ink));
             overflow-x: hidden;
             /* subtle noise texture for vintage feel */
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
         }
 
+        /* 다크모드/라이트모드 시 텍스트 및 배경 자연스럽게 전환 */
+        *, *::before, *::after {
+            transition-property: color, background-color, border-color, fill, stroke;
+            transition-duration: 300ms;
+            transition-timing-function: ease;
+        }
+
         /* Kitsch Brutalism Styles */
         .kitsch-border {
-            border: 2px solid #3e362e;
-            box-shadow: 6px 6px 0px #3e362e;
-            transition: all 0.2s ease;
+            border: 2px solid rgb(var(--color-ink));
+            box-shadow: 6px 6px 0px rgb(var(--color-ink));
+            /* 'all' 대신 개별 속성 지정 (텍스트 깜박임 현상 해결) */
+            transition-property: color, background-color, border-color, box-shadow, transform;
+            transition-duration: 300ms, 300ms, 300ms, 300ms, 200ms;
+            transition-timing-function: ease;
         }
         
         .kitsch-border:hover {
             transform: translate(-2px, -2px);
-            box-shadow: 8px 8px 0px #3e362e;
+            box-shadow: 8px 8px 0px rgb(var(--color-ink));
         }
 
         .kitsch-button:active {
             transform: translate(4px, 4px);
-            box-shadow: 2px 2px 0px #3e362e;
+            box-shadow: 2px 2px 0px rgb(var(--color-ink));
         }
 
         .tape {
@@ -82,9 +117,10 @@
             top: 0;
             bottom: 0;
             width: 8px;
-            background-color: #3e362e;
+            background-color: rgb(var(--color-ink));
             left: 24px;
             border-radius: 4px;
+            transition: background-color 0.3s ease;
         }
 
         @media (min-width: 768px) {
@@ -98,12 +134,13 @@
             position: absolute;
             width: 24px;
             height: 24px;
-            background-color: #f4f1ea;
-            border: 4px solid #db7c6e;
+            background-color: rgb(var(--color-vintage-bg));
+            border: 4px solid rgb(var(--color-coral));
             border-radius: 50%;
             left: -8px;
             top: 0;
             z-index: 10;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         @media (min-width: 768px) {
@@ -117,7 +154,10 @@
         .reveal {
             opacity: 0;
             transform: translateY(30px);
-            transition: all 0.8s ease-out;
+            /* 'all' 속성 제거 (깜박임 유발 원인 제거) */
+            transition-property: opacity, transform, background-color, color, border-color;
+            transition-duration: 0.8s, 0.8s, 300ms, 300ms, 300ms;
+            transition-timing-function: ease-out;
         }
         .reveal.active {
             opacity: 1;
@@ -137,7 +177,16 @@
         }
     </style>
 </head>
-<body class="antialiased selection:bg-mustard selection:text-ink font-sans">
+<body class="antialiased selection:bg-mustard selection:text-ink font-sans transition-colors duration-300">
+
+    <button id="themeToggle" class="fixed top-6 right-6 z-50 w-12 h-12 rounded-full kitsch-border bg-vintage-bg text-ink flex items-center justify-center hover:bg-coral hover:text-white transition-colors duration-300" aria-label="Toggle Dark Mode">
+        <svg id="themeIconSun" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg id="themeIconMoon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+    </button>
 
     <header class="relative min-h-screen flex items-center justify-center overflow-hidden pt-10 pb-20 px-6">
         <!-- Decorational elements -->
@@ -171,7 +220,7 @@
         </div>
     </header>
 
-    <section id="journey" class="py-20 px-6 bg-white bg-opacity-40 border-y-2 border-ink relative reveal">
+    <section id="journey" class="py-20 px-6 bg-card-1 bg-opacity-40 border-y-2 border-ink relative reveal">
         <div class="max-w-3xl mx-auto text-center">
             <h2 class="text-2xl md:text-3xl font-bold mb-6 flex items-center justify-center gap-3">
                 <span class="text-coral">⚑</span> 여정의 시작
@@ -209,7 +258,7 @@
 
                 <!-- Right side (Card) -->
                 <div class="w-full md:w-5/12 md:pl-12 relative mt-4 md:mt-0">
-                    <div class="bg-white p-6 md:p-8 kitsch-border relative">
+                    <div class="bg-card-1 p-6 md:p-8 kitsch-border relative">
                         <div class="tape"></div>
                         <div class="stamp absolute -top-4 -right-4 bg-vintage-bg">취향저격</div>
                         <h3 class="text-3xl font-black mb-2 tracking-tight">FCC</h3>
@@ -227,7 +276,7 @@
 
             <!-- Station 2: Konkuk -->
             <div class="relative flex flex-col md:flex-row-reverse items-center justify-between w-full reveal pl-12 md:pl-0">
-                <div class="station-node mt-4 md:mt-0" style="border-color: #dcb15b;"></div>
+                <div class="station-node mt-4 md:mt-0" style="border-color: rgb(var(--color-mustard));"></div>
                 
                 <!-- Right side (Empty on mobile, spacing on desktop) -->
                 <div class="hidden md:block md:w-5/12 text-left pl-12">
@@ -239,7 +288,7 @@
 
                 <!-- Left side (Card) -->
                 <div class="w-full md:w-5/12 md:pr-12 relative mt-4 md:mt-0">
-                    <div class="bg-[#faf9f5] p-6 md:p-8 kitsch-border relative" style="border-color: #dcb15b; box-shadow: 6px 6px 0px #dcb15b;">
+                    <div class="bg-card-2 p-6 md:p-8 kitsch-border relative" style="border-color: rgb(var(--color-mustard)); box-shadow: 6px 6px 0px rgb(var(--color-mustard));">
                         <div class="tape"></div>
                         <h3 class="text-3xl font-black mb-2 tracking-tight">카페704호</h3>
                         <p class="text-sm font-typewriter text-gray-500 mb-6 border-b-2 border-dashed border-gray-300 pb-4">Konkuk Univ. Station</p>
@@ -260,7 +309,7 @@
 
             <!-- Station 3: Sangsu -->
             <div class="relative flex flex-col md:flex-row items-center justify-between w-full reveal pl-12 md:pl-0">
-                <div class="station-node mt-4 md:mt-0" style="border-color: #3e362e;"></div>
+                <div class="station-node mt-4 md:mt-0" style="border-color: rgb(var(--color-ink));"></div>
                 
                 <!-- Left side -->
                 <div class="hidden md:block md:w-5/12 text-right pr-12">
@@ -272,7 +321,7 @@
 
                 <!-- Right side (Card) -->
                 <div class="w-full md:w-5/12 md:pl-12 relative mt-4 md:mt-0">
-                    <div class="bg-white p-6 md:p-8 kitsch-border relative">
+                    <div class="bg-card-1 p-6 md:p-8 kitsch-border relative">
                         <div class="tape"></div>
                         <h3 class="text-3xl font-black mb-2 tracking-tight">TYPE 한강점</h3>
                         <p class="text-sm font-typewriter text-gray-500 mb-6 border-b-2 border-dashed border-gray-300 pb-4">Sangsu Station</p>
@@ -293,7 +342,7 @@
 
             <!-- Station 4: Hongdae -->
             <div class="relative flex flex-col md:flex-row-reverse items-center justify-between w-full reveal pl-12 md:pl-0">
-                <div class="station-node mt-4 md:mt-0" style="border-color: #db7c6e;"></div>
+                <div class="station-node mt-4 md:mt-0" style="border-color: rgb(var(--color-coral));"></div>
                 
                 <!-- Right side -->
                 <div class="hidden md:block md:w-5/12 text-left pl-12">
@@ -307,14 +356,14 @@
                 <div class="w-full md:w-5/12 md:pr-12 relative mt-4 md:mt-0">
                     <div class="bg-coral-light p-6 md:p-8 kitsch-border relative">
                         <div class="tape"></div>
-                        <div class="stamp absolute -top-4 -left-4 bg-vintage-bg" style="border-color: #3e362e; color: #3e362e;">HOT</div>
+                        <div class="stamp absolute -top-4 -left-4 bg-vintage-bg" style="border-color: rgb(var(--color-ink)); color: rgb(var(--color-ink));">HOT</div>
                         <h3 class="text-3xl font-black mb-2 tracking-tight">코이크</h3>
                         <p class="text-sm font-typewriter text-ink mb-6 border-b-2 border-dashed border-ink pb-4">Hongik Univ. Station</p>
                         <p class="text-lg leading-relaxed text-ink">
                             마지막 여정, 가장 유니크하고 힙한 무드를 자랑하는 디저트 아지트. 감각적인 인테리어 디자인과 눈과 입이 모두 즐거운 디저트 라인업이 완벽한 마무리를 선사합니다.
                         </p>
                         <div class="mt-6 flex gap-2 flex-wrap">
-                            <span class="bg-white px-3 py-1 rounded-full text-sm font-bold border border-ink">#키치감성</span>
+                            <span class="bg-card-1 px-3 py-1 rounded-full text-sm font-bold border border-ink">#키치감성</span>
                             <span class="bg-mustard-light px-3 py-1 rounded-full text-sm font-bold border border-ink">#디저트맛집</span>
                         </div>
                     </div>
@@ -328,7 +377,7 @@
             <!-- End of line dot -->
             <div class="relative w-full h-8 flex justify-start md:justify-center pl-12 md:pl-0 reveal">
                 <div class="w-6 h-6 rounded-full bg-ink flex items-center justify-center z-10 absolute left-[-9px] md:left-[calc(50%-12px)]">
-                    <div class="w-2 h-2 rounded-full bg-white"></div>
+                    <div class="w-2 h-2 rounded-full bg-vintage-bg"></div>
                 </div>
             </div>
 
@@ -408,6 +457,41 @@
                 toast.classList.remove('opacity-100');
                 setTimeout(() => toast.classList.add('hidden'), 300);
             }, 3000);
+        });
+
+        // Dark Mode Toggle Logic
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const themeIconSun = document.getElementById('themeIconSun');
+        const themeIconMoon = document.getElementById('themeIconMoon');
+        const html = document.documentElement;
+
+        // Check for saved theme preference or system preference
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            html.classList.add('dark');
+            themeIconSun.classList.remove('hidden');
+            themeIconMoon.classList.add('hidden');
+        } else {
+            html.classList.remove('dark');
+            themeIconMoon.classList.remove('hidden');
+            themeIconSun.classList.add('hidden');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+                themeIconSun.classList.remove('hidden');
+                themeIconMoon.classList.add('hidden');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIconMoon.classList.remove('hidden');
+                themeIconSun.classList.add('hidden');
+                localStorage.setItem('theme', 'light');
+            }
         });
     </script>
 </body>
