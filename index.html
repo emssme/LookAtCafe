@@ -176,6 +176,18 @@
             font-weight: bold;
             opacity: 0.8;
         }
+
+        #commentsList::-webkit-scrollbar {
+            width: 10px;
+        }
+        #commentsList::-webkit-scrollbar-track {
+            background: rgb(var(--color-vintage-bg)); 
+            border-left: 2px solid rgb(var(--color-ink));
+        }
+        #commentsList::-webkit-scrollbar-thumb {
+            background-color: rgb(var(--color-mustard)); 
+            border: 2px solid rgb(var(--color-ink));
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-mustard selection:text-ink font-sans transition-colors duration-300">
@@ -414,7 +426,51 @@
         </div>
     </section>
 
-    <footer class="bg-vintage-bg py-8 border-t-2 border-ink text-center">
+    <section id="guestbook" class="py-24 px-6 bg-vintage-bg border-t-2 border-ink relative z-10 reveal">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold mb-10 text-center flex items-center justify-center gap-3">
+                <span class="text-mustard">✍️</span> 방명록 : 나만의 아지트 추천
+            </h2>
+            
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- 작성 폼 영역 -->
+                <div class="w-full md:w-1/3">
+                    <form id="commentForm" class="bg-card-1 p-6 kitsch-border flex flex-col gap-5 sticky top-24">
+                        <div class="tape" style="background-color: rgb(var(--color-coral));"></div>
+                        <h3 class="font-kitsch text-2xl mb-2 border-b-2 border-dashed border-gray-300 pb-3">기록 남기기</h3>
+                        
+                        <div class="flex flex-col gap-2 text-left">
+                            <label for="commentNickname" class="text-sm font-bold text-ink">닉네임</label>
+                            <input type="text" id="commentNickname" required maxlength="15" class="p-3 text-lg border-2 border-ink bg-vintage-bg focus:outline-none focus:bg-mustard-light transition-colors kitsch-border" style="box-shadow: 4px 4px 0px rgb(var(--color-ink));" placeholder="예: 커피러버">
+                        </div>
+                        
+                        <div class="flex flex-col gap-2 text-left">
+                            <label for="commentContent" class="text-sm font-bold text-ink">추천 카페 / 코멘트</label>
+                            <textarea id="commentContent" required rows="4" class="p-3 text-lg border-2 border-ink bg-vintage-bg focus:outline-none focus:bg-mustard-light transition-colors resize-none kitsch-border" style="box-shadow: 4px 4px 0px rgb(var(--color-ink));" placeholder="당신만 아는 비밀 아지트를 살짝 공유해주세요!"></textarea>
+                        </div>
+                        
+                        <button type="submit" id="commentSubmitBtn" class="mt-4 kitsch-button bg-ink text-vintage-bg font-bold py-3 kitsch-border hover:bg-coral hover:text-white transition-colors duration-300">
+                            방명록 등록하기
+                        </button>
+                        
+                        <p id="commentErrorMsg" class="text-coral text-sm font-bold mt-2 hidden text-center">내용을 모두 입력해주세요.</p>
+                    </form>
+                </div>
+                
+                <!-- 리스트 출력 영역 -->
+                <div class="w-full md:w-2/3">
+                    <div id="commentsList" class="flex flex-col gap-6 max-h-[600px] overflow-y-auto pr-4 pb-4">
+                        <!-- JS에서 댓글 렌더링 -->
+                        <div class="text-center font-kitsch text-gray-500 py-16 border-2 border-dashed border-gray-400 kitsch-border">
+                            로딩 중이거나 아직 작성된 방명록이 없습니다.<br>첫 번째로 비밀 아지트를 추천해주세요!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-card-2 py-8 border-t-2 border-ink text-center z-10 relative">
         <div class="font-typewriter text-gray-500 text-sm">
             <p>© 2026 Secret Cafe List. All rights reserved.</p>
             <p class="mt-2">Designed with Kitsch & Vintage Mood.</p>
@@ -615,6 +671,97 @@
             setCanvasSize();
             initParticles();
         });
+    </script>
+
+    <script>
+        const commentForm = document.getElementById('commentForm');
+        const commentNickname = document.getElementById('commentNickname');
+        const commentContent = document.getElementById('commentContent');
+        const commentsList = document.getElementById('commentsList');
+        const commentErrorMsg = document.getElementById('commentErrorMsg');
+
+        // XSS(크로스 사이트 스크립팅) 방지 유틸 함수
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
+        // 초기 방명록 데이터 렌더링
+        function loadComments() {
+            // 로컬 스토리지에서 데이터 가져오기 (없으면 빈 배열)
+            const comments = JSON.parse(localStorage.getItem('secretCafeComments')) || [];
+            commentsList.innerHTML = '';
+            
+            if (comments.length === 0) {
+                commentsList.innerHTML = `
+                    <div class="text-center font-kitsch text-gray-500 py-16 border-2 border-dashed border-gray-400 kitsch-border bg-vintage-bg">
+                        로딩 중이거나 아직 작성된 방명록이 없습니다.<br>첫 번째로 비밀 아지트를 추천해주세요!
+                    </div>
+                `;
+                return;
+            }
+
+            // 댓글 리스트 생성 (최신순 렌더링)
+            comments.forEach(comment => {
+                const commentEl = document.createElement('div');
+                commentEl.className = "bg-card-2 p-5 kitsch-border relative transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[6px_6px_0px_rgb(var(--color-coral))]";
+                commentEl.style.borderColor = "rgb(var(--color-ink))";
+                
+                commentEl.innerHTML = `
+                    <div class="flex justify-between items-start mb-3 border-b-2 border-dashed border-gray-300 pb-2">
+                        <span class="font-kitsch text-xl text-coral">${escapeHTML(comment.nickname)}</span>
+                        <span class="text-xs font-typewriter text-gray-500">${comment.date}</span>
+                    </div>
+                    <p class="text-lg text-ink whitespace-pre-wrap">${escapeHTML(comment.content)}</p>
+                    <div class="tape" style="background-color: rgb(var(--color-mustard)); width: 60px; left: 30px; top: -10px;"></div>
+                `;
+                commentsList.appendChild(commentEl);
+            });
+        }
+
+        // 방명록 폼 제출 이벤트
+        commentForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // 폼 기본 제출 막기
+            
+            const nickname = commentNickname.value.trim();
+            const content = commentContent.value.trim();
+
+            if (!nickname || !content) {
+                commentErrorMsg.classList.remove('hidden');
+                return;
+            }
+            commentErrorMsg.classList.add('hidden');
+
+            // 새 방명록 객체 생성
+            const newComment = {
+                nickname: nickname,
+                content: content,
+                date: new Date().toLocaleDateString('ko-KR', { 
+                    year: 'numeric', month: '2-digit', day: '2-digit', 
+                    hour: '2-digit', minute: '2-digit' 
+                })
+            };
+
+            // 기존 데이터에 추가 후 저장
+            const comments = JSON.parse(localStorage.getItem('secretCafeComments')) || [];
+            comments.unshift(newComment); // 배열의 맨 앞에 추가 (최신순)
+            localStorage.setItem('secretCafeComments', JSON.stringify(comments));
+
+            // 입력 폼 초기화 및 리스트 재렌더링
+            commentNickname.value = '';
+            commentContent.value = '';
+            loadComments();
+        });
+
+        // 페이지 로드 시 방명록 불러오기 실행
+        window.addEventListener('DOMContentLoaded', loadComments);
     </script>
 </body>
 </html>
