@@ -188,6 +188,60 @@
             background-color: rgb(var(--color-mustard)); 
             border: 2px solid rgb(var(--color-ink));
         }
+
+        /* === 심리테스트 : 결과 역으로 이동하는 지하철 열차 === */
+        #subway-train {
+            position: absolute;
+            left: 28px;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            margin-top: -22px; /* 노드 중앙 정렬 */
+            border-radius: 50%;
+            background-color: rgb(var(--color-coral));
+            border: 3px solid rgb(var(--color-ink));
+            box-shadow: 3px 3px 0px rgb(var(--color-ink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            line-height: 1;
+            z-index: 30;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            animation: train-bob 0.5s ease-in-out infinite alternate;
+        }
+        @media (min-width: 768px) {
+            #subway-train { left: 50%; }
+        }
+        @keyframes train-bob {
+            from { box-shadow: 3px 3px 0px rgb(var(--color-ink)); }
+            to   { box-shadow: 3px 6px 0px rgb(var(--color-ink)); }
+        }
+
+        /* 도착한 역 카드/노드 하이라이트 */
+        .station-arrived {
+            animation: station-glow 1.7s ease-out 2;
+        }
+        @keyframes station-glow {
+            0%, 100% { box-shadow: 6px 6px 0px rgb(var(--color-ink)); }
+            50% {
+                box-shadow: 0 0 0 6px rgb(var(--color-coral) / 0.5),
+                            8px 8px 0px rgb(var(--color-ink));
+            }
+        }
+        .node-arrived {
+            border-color: rgb(var(--color-coral)) !important;
+            animation: node-pulse 0.9s ease-out 3;
+        }
+        @keyframes node-pulse {
+            0%   { box-shadow: 0 0 0 0 rgb(var(--color-coral) / 0.6); }
+            100% { box-shadow: 0 0 0 16px rgb(var(--color-coral) / 0); }
+        }
+
+        /* 질문 카드 전환 효과 */
+        #questionArea { transition: opacity 0.25s ease; }
     </style>
 </head>
 <body class="antialiased selection:bg-mustard selection:text-ink font-sans transition-colors duration-300">
@@ -252,15 +306,17 @@
         </div>
     </section>
 
-    <section class="py-24 px-6 relative max-w-6xl mx-auto overflow-hidden">
+    <section id="subway-section" class="py-24 px-6 relative max-w-6xl mx-auto overflow-hidden">
         
         <!-- Subway Line Background -->
         <div class="subway-line"></div>
+        <!-- 심리테스트 결과로 노선을 따라 이동하는 지하철 열차 -->
+        <div id="subway-train" class="hidden" aria-hidden="true">🚃</div>
 
         <div class="relative z-10 flex flex-col gap-24 md:gap-32">
 
             <!-- Station 1: Gunja -->
-            <div class="relative flex flex-col md:flex-row items-center justify-between w-full reveal pl-12 md:pl-0">
+            <div id="station-1" class="relative flex flex-col md:flex-row items-center justify-between w-full reveal pl-12 md:pl-0">
                 <div class="station-node mt-1 md:mt-0"></div>
                 
                 <!-- Mobile Station Title (Normal Flow to prevent overlap) -->
@@ -295,7 +351,7 @@
             </div>
 
             <!-- Station 2: Konkuk -->
-            <div class="relative flex flex-col md:flex-row-reverse items-center justify-between w-full reveal pl-12 md:pl-0">
+            <div id="station-2" class="relative flex flex-col md:flex-row-reverse items-center justify-between w-full reveal pl-12 md:pl-0">
                 <div class="station-node mt-1 md:mt-0" style="border-color: rgb(var(--color-mustard));"></div>
                 
                 <!-- Mobile Station Title (Normal Flow) -->
@@ -329,7 +385,7 @@
             </div>
 
             <!-- Station 3: Sangsu -->
-            <div class="relative flex flex-col md:flex-row items-center justify-between w-full reveal pl-12 md:pl-0">
+            <div id="station-3" class="relative flex flex-col md:flex-row items-center justify-between w-full reveal pl-12 md:pl-0">
                 <div class="station-node mt-1 md:mt-0" style="border-color: rgb(var(--color-ink));"></div>
                 
                 <!-- Mobile Station Title (Normal Flow) -->
@@ -363,7 +419,7 @@
             </div>
 
             <!-- Station 4: Hongdae -->
-            <div class="relative flex flex-col md:flex-row-reverse items-center justify-between w-full reveal pl-12 md:pl-0">
+            <div id="station-4" class="relative flex flex-col md:flex-row-reverse items-center justify-between w-full reveal pl-12 md:pl-0">
                 <div class="station-node mt-1 md:mt-0" style="border-color: rgb(var(--color-coral));"></div>
                 
                 <!-- Mobile Station Title (Normal Flow) -->
@@ -404,6 +460,57 @@
                 </div>
             </div>
 
+        </div>
+    </section>
+
+    <!-- === 오늘의 기분 심리테스트 : 취향 아지트 큐레이션 === -->
+    <section id="quiz" class="py-24 px-6 bg-card-1 bg-opacity-40 border-t-2 border-ink relative z-10 reveal overflow-hidden">
+        <div class="max-w-2xl mx-auto">
+            <div class="text-center mb-12">
+                <div class="inline-block mb-5 transform -rotate-2">
+                    <span class="font-typewriter bg-coral text-white px-4 py-1 text-sm md:text-base border-2 border-ink tracking-widest block kitsch-border">MOOD CHECK</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-black mb-4">
+                    🧭 오늘 당신의 기분은 어떤가요?
+                </h2>
+                <p class="font-kitsch text-xl md:text-2xl text-ink opacity-80">
+                    3가지 질문에 답하면, 당신에게 꼭 맞는<br class="md:hidden"> 비밀 아지트 역으로 안내해 드릴게요.
+                </p>
+            </div>
+
+            <!-- 진행 표시 (지하철 노선 스타일) -->
+            <div id="quizProgress" class="flex items-center justify-center mb-10"></div>
+
+            <!-- 질문 / 결과 카드 -->
+            <div id="quizCard" class="bg-card-1 p-8 md:p-10 kitsch-border relative">
+                <div class="tape" style="background-color: rgb(var(--color-coral));"></div>
+
+                <!-- 질문 영역 -->
+                <div id="questionArea">
+                    <div id="questionEmoji" class="text-5xl text-center mb-4"></div>
+                    <h3 id="questionText" class="text-2xl md:text-3xl font-bold text-center mb-8 leading-snug"></h3>
+                    <div id="optionsArea" class="flex flex-col gap-5"></div>
+                </div>
+
+                <!-- 결과 영역 (초기 숨김) -->
+                <div id="resultArea" class="hidden text-center">
+                    <p class="font-kitsch text-xl text-mustard mb-3">당신을 위한 오늘의 아지트는...</p>
+                    <div id="resultStationNo" class="font-kitsch text-lg text-coral mb-1"></div>
+                    <h3 id="resultCafe" class="text-4xl md:text-5xl font-black mb-1 tracking-tight"></h3>
+                    <p id="resultStation" class="text-base font-typewriter text-gray-500 mb-5"></p>
+                    <p id="resultDesc" class="text-lg leading-relaxed mb-6"></p>
+                    <div id="resultTags" class="flex gap-2 flex-wrap justify-center mb-8"></div>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button id="rideBtn" class="kitsch-button bg-coral text-white font-bold text-lg py-3 px-8 kitsch-border inline-flex items-center justify-center gap-2">
+                            🚃 이 역으로 떠나기
+                        </button>
+                        <button id="retryBtn" class="kitsch-button bg-vintage-bg text-ink font-bold text-lg py-3 px-8 kitsch-border inline-flex items-center justify-center gap-2">
+                            ↺ 다시 테스트하기
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-500 font-kitsch mt-6 opacity-70">잠시 후 노선을 따라 자동으로 이동합니다 🚉</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -762,6 +869,242 @@
 
         // 페이지 로드 시 방명록 불러오기 실행
         window.addEventListener('DOMContentLoaded', loadComments);
+    </script>
+
+    <script>
+        // ===== 오늘의 기분 심리테스트 (취향 아지트 큐레이션) =====
+        (function () {
+            const quizQuestions = [
+                {
+                    emoji: "☁️",
+                    q: "오늘, 카페로 떠나는 날의 하늘은?",
+                    options: [
+                        { emoji: "☔", label: "비가 촉촉이 내려요", sub: "조용히 안기고 싶은 날", scores: { cafe704: 2, fcc: 1 } },
+                        { emoji: "☀️", label: "구름 한 점 없이 맑아요", sub: "탁 트인 풍경이 그리운 날", scores: { type: 2, koik: 1 } }
+                    ]
+                },
+                {
+                    emoji: "🎧",
+                    q: "자리를 잡은 당신, 지금 뭐하고 있나요?",
+                    options: [
+                        { emoji: "📖", label: "노트북과 책에 폭 빠져 집중", sub: "나만의 세계로", scores: { fcc: 2, cafe704: 1 } },
+                        { emoji: "📸", label: "예쁜 공간 찰칵, 달콤한 디저트", sub: "눈과 입이 즐겁게", scores: { koik: 2, type: 1 } }
+                    ]
+                },
+                {
+                    emoji: "💓",
+                    q: "당신의 마음을 두근거리게 하는 무드는?",
+                    options: [
+                        { emoji: "🕰️", label: "세월이 묻은 빈티지 소품들", sub: "따뜻하고 정겨운", scores: { fcc: 2, cafe704: 1 } },
+                        { emoji: "✨", label: "감각적이고 유니크한 힙 디자인", sub: "새롭고 트렌디한", scores: { koik: 2, type: 1 } }
+                    ]
+                }
+            ];
+
+            const cafes = {
+                fcc: {
+                    no: "STATION 01", name: "FCC", station: "군자역", stationId: "station-1",
+                    desc: "비 오는 날 조용히 안기고 싶은 당신에게. 사장님만의 확고한 취향이 묻어나는 빈티지 아지트예요.",
+                    tags: ["#독보적취향", "#빈티지무드"]
+                },
+                cafe704: {
+                    no: "STATION 02", name: "카페704호", station: "건대입구역", stationId: "station-2",
+                    desc: "나만의 세계에 폭 빠지고 싶은 당신에게. 대학가 속 기적처럼 숨겨진 조용한 다락방이에요.",
+                    tags: ["#작업하기좋은", "#아늑함"]
+                },
+                type: {
+                    no: "STATION 03", name: "TYPE 한강점", station: "상수역", stationId: "station-3",
+                    desc: "탁 트인 풍경과 좋은 커피를 사랑하는 당신에게. 노을 지는 한강 뷰가 완벽한 쉼표가 되어줄 거예요.",
+                    tags: ["#뛰어난커피", "#리버뷰"]
+                },
+                koik: {
+                    no: "STATION 04", name: "코이크", station: "홍대입구역", stationId: "station-4",
+                    desc: "감각적이고 힙한 무드를 즐기는 당신에게. 눈과 입이 모두 즐거운 유니크한 디저트 아지트예요.",
+                    tags: ["#키치감성", "#디저트맛집"]
+                }
+            };
+
+            // 동점 시 우선순위 (앞쪽이 우선)
+            const tiePriority = ["cafe704", "fcc", "type", "koik"];
+
+            let currentStep = 0;
+            let scores = { fcc: 0, cafe704: 0, type: 0, koik: 0 };
+            let isTraveling = false;
+            let autoRideTimer = null;
+
+            const $ = (id) => document.getElementById(id);
+            const questionArea = $("questionArea");
+            const resultArea = $("resultArea");
+            const optionsArea = $("optionsArea");
+            const progressEl = $("quizProgress");
+
+            function renderProgress(done) {
+                progressEl.innerHTML = "";
+                const total = quizQuestions.length;
+                for (let i = 0; i < total; i++) {
+                    const filled = done || i < currentStep;
+                    const active = !done && i === currentStep;
+                    const dot = document.createElement("div");
+                    dot.className = "w-5 h-5 rounded-full border-4 transition-colors duration-300 " +
+                        (filled ? "bg-coral border-coral"
+                            : active ? "bg-vintage-bg border-coral"
+                                : "bg-vintage-bg border-gray-400");
+                    progressEl.appendChild(dot);
+                    if (i < total - 1) {
+                        const bar = document.createElement("div");
+                        bar.className = "w-10 h-1 transition-colors duration-300 " +
+                            ((done || i < currentStep) ? "bg-coral" : "bg-gray-400");
+                        progressEl.appendChild(bar);
+                    }
+                }
+                if (done) {
+                    const bar = document.createElement("div");
+                    bar.className = "w-10 h-1 bg-coral";
+                    progressEl.appendChild(bar);
+                    const flag = document.createElement("div");
+                    flag.className = "text-2xl ml-1";
+                    flag.textContent = "🚩";
+                    progressEl.appendChild(flag);
+                }
+            }
+
+            function renderQuestion() {
+                const q = quizQuestions[currentStep];
+                $("questionEmoji").textContent = q.emoji;
+                $("questionText").textContent = q.q;
+                optionsArea.innerHTML = "";
+                q.options.forEach((opt) => {
+                    const btn = document.createElement("button");
+                    btn.className = "group w-full text-left bg-vintage-bg p-5 kitsch-border flex items-center gap-4 hover:bg-mustard-light transition-colors duration-200";
+                    btn.innerHTML =
+                        '<span class="text-3xl shrink-0">' + opt.emoji + '</span>' +
+                        '<span class="flex flex-col">' +
+                        '<span class="text-lg md:text-xl font-bold text-ink">' + opt.label + '</span>' +
+                        '<span class="text-sm text-gray-500 font-kitsch">' + opt.sub + '</span>' +
+                        '</span>';
+                    btn.addEventListener("click", () => selectOption(opt));
+                    optionsArea.appendChild(btn);
+                });
+            }
+
+            function selectOption(opt) {
+                for (const k in opt.scores) scores[k] += opt.scores[k];
+                currentStep++;
+                // 부드러운 카드 전환
+                questionArea.style.opacity = "0";
+                setTimeout(() => {
+                    if (currentStep < quizQuestions.length) {
+                        renderProgress(false);
+                        renderQuestion();
+                        questionArea.style.opacity = "1";
+                    } else {
+                        showResult();
+                    }
+                }, 220);
+            }
+
+            function computeResult() {
+                let best = null, bestScore = -1;
+                tiePriority.forEach((k) => {
+                    if (scores[k] > bestScore) { bestScore = scores[k]; best = k; }
+                });
+                return best;
+            }
+
+            function showResult() {
+                const c = cafes[computeResult()];
+                questionArea.classList.add("hidden");
+                resultArea.classList.remove("hidden");
+                questionArea.style.opacity = "1";
+                $("resultStationNo").textContent = c.no;
+                $("resultCafe").textContent = c.name;
+                $("resultStation").textContent = c.station;
+                $("resultDesc").textContent = c.desc;
+                $("resultTags").innerHTML = c.tags
+                    .map((t) => '<span class="bg-coral-light px-3 py-1 rounded-full text-sm font-bold border border-ink">' + t + '</span>')
+                    .join("");
+                renderProgress(true);
+
+                $("rideBtn").onclick = () => { clearTimeout(autoRideTimer); rideToStation(c.stationId); };
+                $("retryBtn").onclick = resetQuiz;
+
+                // 결과 확인 후 노선을 따라 자동 이동
+                autoRideTimer = setTimeout(() => rideToStation(c.stationId), 1700);
+            }
+
+            function resetQuiz() {
+                clearTimeout(autoRideTimer);
+                currentStep = 0;
+                scores = { fcc: 0, cafe704: 0, type: 0, koik: 0 };
+                resultArea.classList.add("hidden");
+                questionArea.classList.remove("hidden");
+                questionArea.style.opacity = "1";
+                renderProgress(false);
+                renderQuestion();
+            }
+
+            // ===== 노선을 따라 지하철이 이동하며 결과 역으로 자동 스크롤 =====
+            function rideToStation(stationId) {
+                if (isTraveling) return;
+                isTraveling = true;
+                const section = $("subway-section");
+                const train = $("subway-train");
+
+                // 1단계: 노선의 시작(지하철 섹션 상단)으로 부드럽게 이동
+                const sectionTopY = section.getBoundingClientRect().top + window.scrollY - 24;
+                window.scrollTo({ top: Math.max(0, sectionTopY), behavior: "smooth" });
+
+                // 2단계: 열차가 노선을 따라 결과 역까지 주행 + 뷰 동기화
+                setTimeout(() => ridePhase(section, train, stationId), 720);
+            }
+
+            function ridePhase(section, train, stationId) {
+                const node = document.querySelector("#" + stationId + " .station-node");
+                const card = document.querySelector("#" + stationId + " .kitsch-border");
+                const sectionRect = section.getBoundingClientRect();
+                const nodeRect = node.getBoundingClientRect();
+
+                const trainStart = 24;
+                const trainEnd = (nodeRect.top - sectionRect.top) + nodeRect.height / 2;
+                const startScrollY = window.scrollY;
+                const endScrollY = Math.max(0, startScrollY + nodeRect.top - (window.innerHeight / 2));
+
+                train.classList.remove("hidden");
+                train.style.top = trainStart + "px";
+                // 렌더 후 페이드 인
+                requestAnimationFrame(() => { train.style.opacity = "1"; });
+
+                const duration = 1500;
+                const t0 = performance.now();
+                const easeInOut = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2);
+
+                function step(now) {
+                    const p = Math.min((now - t0) / duration, 1);
+                    const e = easeInOut(p);
+                    train.style.top = (trainStart + (trainEnd - trainStart) * e) + "px";
+                    window.scrollTo(0, startScrollY + (endScrollY - startScrollY) * e);
+                    if (p < 1) requestAnimationFrame(step);
+                    else arrive(train, node, card);
+                }
+                requestAnimationFrame(step);
+            }
+
+            function arrive(train, node, card) {
+                card.classList.add("station-arrived");
+                node.classList.add("node-arrived");
+                setTimeout(() => { train.style.opacity = "0"; }, 1100);
+                setTimeout(() => { train.classList.add("hidden"); }, 1550);
+                setTimeout(() => {
+                    card.classList.remove("station-arrived");
+                    node.classList.remove("node-arrived");
+                    isTraveling = false;
+                }, 3400);
+            }
+
+            // 초기화
+            renderProgress(false);
+            renderQuestion();
+        })();
     </script>
 </body>
 </html>
