@@ -7,7 +7,6 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
 
     <script>
@@ -24,7 +23,7 @@
                     },
                     fontFamily: {
                         sans: ['Pretendard', 'sans-serif'],
-                        kitsch: ['"Nanum Pen Script"', 'cursive'],
+                        kitsch: ['"NeoDunggeunmo"', 'monospace'],
                         typewriter: ['"Special Elite"', 'monospace']
                     }
                 }
@@ -32,6 +31,13 @@
         }
     </script>
     <style>
+        @font-face {
+            font-family: 'NeoDunggeunmo';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.3/NeoDunggeunmo.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         body {
             background-color: #f4f1ea;
             color: #3e362e;
@@ -153,7 +159,7 @@
                 </span>
             </h1>
             
-            <p class="font-kitsch text-3xl md:text-4xl text-ink max-w-2xl mx-auto leading-relaxed mt-10">
+            <p class="font-kitsch text-2xl md:text-3xl text-ink max-w-2xl mx-auto leading-relaxed mt-10">
                 "나만 알고 싶지만,<br class="md:hidden" /> 당신에게만 살짝 공유하는 비밀 아지트"
             </p>
             
